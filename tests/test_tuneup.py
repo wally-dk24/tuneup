@@ -99,9 +99,11 @@ class TuneupTest(unittest.TestCase):
             self.assertNotIn(c["case_id"], out, "held-out leaked to proposer")
         for c in train:
             self.assertIn(c["case_id"], out, "train should be visible")
-        # seal sha recorded and verifiable
+        # seal sha recorded and verifiable (against the latest cycle's seal)
+        latest = tuneup.latest_cycle("t1")
+        spath = tuneup.sealed_path("t1", latest)
         meta = tuneup.read_json(
-            os.path.join(tuneup.cycle_dir("t1", tuneup.latest_cycle("t1")), "meta.json"))
+            os.path.join(tuneup.cycle_dir("t1", latest), "meta.json"))
         self.assertEqual(meta["sealed_sha256"], tuneup.sha256_file(spath))
 
     def test_propose_validation(self):
