@@ -342,6 +342,11 @@ def open_cycle(tool_name: str, cfg: dict) -> tuple[str, list, list]:
     train, heldout = cases[:len(cases) - n_held], cases[len(cases) - n_held:]
     cycle = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
     cdir = cycle_dir(tool_name, cycle)
+    n = 2
+    while os.path.exists(cdir):
+        cycle = f"{cycle}-{n}"
+        cdir = cycle_dir(tool_name, cycle)
+        n += 1
     os.makedirs(cdir, exist_ok=True)
     # Seal the held-out set BEFORE any proposal can exist. Mode 600.
     spath = sealed_path(tool_name, cycle)
